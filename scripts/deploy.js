@@ -13,16 +13,19 @@ function getContract(web3, contractName, contractAddress) {
 }
 
 async function makeTransactionObject(web3, from, to, stateChangeData, amount = 0, sendMaxValue = false, gasEstimate) {
-    gasWei = new BN(await web3.eth.getGasPrice());
-    ethBalance = new BN(await web3.eth.getBalance(from))
-    console.log(ethBalance.toString(), gasWei.toString())
-    amount = sendMaxValue ? ethBalance.sub(gasWei.mul(gasWei.div(new BN(10))).mul(new BN(gasEstimate))) : amount
-    console.log(amount.toString())
+    maxFeePerGas = new BN(await web3.eth.getGasPrice());
+    priorityPercentage = new BN(5)
+
+    if(sendMaxValue){
+        ethBalance = new BN(await web3.eth.getBalance(from))
+        amount = ethBalance.sub(maxFeePerGas.add(maxFeePerGas.div(priorityPercentage).mul(new BN(gasEstimate))))
+    }
+
     return {
         from: from,
         to: to,
-        maxPriorityFeePerGas: gasWei.div(new BN(10)).toString(),
-        maxFeePerGas: gasWei.toString(),
+        maxPriorityFeePerGas: maxFeePerGas.div(priorityPercentage).toString(),
+        maxFeePerGas: maxFeePerGas.toString(),
         data: stateChangeData,
         value: amount.toString(),
     };
@@ -50,26 +53,6 @@ async function performTransaction(web3, contract, functionName, args, fromAddres
     return txHash;
 }
 
-const send = async (web3, account, transaction) => {
-    try {
-        const options = {
-            from: account.address,
-            data: transaction.encodeABI(),
-            // gasLimit: web3.utils.toHex(200000),
-            // gasPrice: web3.utils.toHex(web3.utils.toWei('5', 'gwei')),
-            maxPriorityFeePerGas: web3.utils.toWei('1', 'gwei'),
-            maxFeePerGas: web3.utils.toWei('5', 'gwei')
-        };
-
-        const signed = await web3.eth.accounts.signTransaction(options, account.privateKey);
-        const receipt = await web3.eth.sendSignedTransaction(signed.rawTransaction);
-        return receipt;
-    }
-    catch (error) {
-        console.log(error);
-    }
-};
-
 const deploy = async (web3, account, contractName, contractArgs) => {
     const path = "./bin/contracts/" + contractName + ".json";
     const contractJSON = JSON.parse(fs.readFileSync(path, "utf8"));
@@ -88,7 +71,7 @@ const deploy = async (web3, account, contractName, contractArgs) => {
     })
     .on('error', function(error){ console.error(error) })
     .on('receipt', function(receipt){
-        console.log(receipt.contractAddress) // contains the new contract address
+        console.log(receipt.contractAddress) //new contract address
     })
 };
 

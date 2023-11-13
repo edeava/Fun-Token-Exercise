@@ -4,6 +4,8 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract Sweeper {
 
+    event Sweeped(address sweepedAccount);
+
     constructor(){}
 
     function sweepTokens(address recipient, address[] calldata tokens, uint[] calldata amounts) internal {
@@ -21,10 +23,12 @@ contract Sweeper {
     }
 
     function execSweep(address payable recipient, address[] calldata tokens, uint[] calldata amounts) payable external {
-        require(tokens.length == amounts.length, "Token and Amount arrays must be the same size!!");
+        require(tokens.length == amounts.length, "Token and Amount arrays must be the same size");
         sweepTokens(recipient, tokens, amounts);
 
         sweepETH(recipient);
+
+        emit Sweeped(msg.sender);
     }
     
 }
