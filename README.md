@@ -9,7 +9,7 @@ discussed as part of the technical follow up interview.
 ### Exercise
 Given a list of deposit addresses and a list of erc20 token addresses sweep all native and erc20
 tokens in the list from the deposit addresses to a single address.
-Extra bonus points for optimizing gas fees whilst mitigating risk
+Extra bonus points for optimizing gas fees whilst mitigating risk.
 Assume the following:
 - All addresses in the list are derived from a master keypair (BIP32).
 - Code has access to the master keypair.

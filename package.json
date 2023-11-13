@@ -1,0 +1,15 @@
+{
+    "name": "fun_token",
+    "version": "1.0.0",
+    "description": "transfer_exercise",
+    "main": "",
+    "author": "",
+    "license": "",
+    "type": "commonjs",
+    "dependencies": {
+        "@openzeppelin/contracts": "^5.0.0",
+        "bn.js": "^5.2.1",
+        "ethers": "^6.8.1",
+        "web3": "^4.2.2"
+    }
+}
