@@ -20,6 +20,7 @@ function sleep(s) {
 }
 
 async function distributeETH(amount){
+    console.info("Starting distribution of ETH to child addresses...")
     value = web3.utils.toWei(amount, "ether");
     
     for(k in childrenKeys){
@@ -30,11 +31,14 @@ async function distributeETH(amount){
             to: childAccount.address,
             value: value
         });
+
+        console.info(childAccount.address, "recieved", amount, "ETH");
     }
 
 }
 
 async function distributeTokens(amount){
+    console.info("Starting distribution of Tokens to child addresses...")
     tokenAmount = web3.utils.toWei(amount, "ether");
     
     for(k in childrenKeys){
@@ -46,7 +50,7 @@ async function distributeTokens(amount){
 
     }
 
-    console.log("Tokens distributed to children!")
+    console.info("Tokens distributed to children!")
 }
 
 async function deploySweeperContract(){
@@ -62,6 +66,7 @@ async function deployTokens(symbol1, symbol2){
 }
 
 async function sweep(){
+    console.info("Sweeping the funds...")
     sweeperContract = await getContract(web3, "Sweeper", _SWEEPER);
 
     for(k in childrenKeys){

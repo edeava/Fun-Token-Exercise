@@ -14,13 +14,17 @@ function getContract(web3, contractName, contractAddress) {
 
 async function makeTransactionObject(web3, from, to, stateChangeData, amount = 0, sendMaxValue = false, gasEstimate) {
     maxFeePerGas = new BN(await web3.eth.getGasPrice());
-    priorityPercentage = new BN(5)
+    priorityPercentage = new BN(10)
 
     if(sendMaxValue){
         ethBalance = new BN(await web3.eth.getBalance(from))
-        amount = ethBalance.sub(maxFeePerGas.add(maxFeePerGas.div(priorityPercentage).mul(new BN(gasEstimate))))
+        amount = ethBalance
+                    .sub(maxFeePerGas
+                        .add(maxFeePerGas
+                            .div(priorityPercentage))
+                            .mul(new BN(gasEstimate)))
     }
-
+    
     return {
         from: from,
         to: to,
